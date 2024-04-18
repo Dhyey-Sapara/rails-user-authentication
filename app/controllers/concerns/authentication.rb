@@ -4,6 +4,7 @@ module Authentication
   def login(user)
     reset_session
     session[:current_user_id] = user.id
+    Session.sweep(1.minute)
   end
 
   def logout
@@ -28,7 +29,7 @@ module Authentication
 
   def current_user
     @current_user ||= if session[:current_user_id].present?
-                        User.find_by(id: session[:current_user_id])
+                        User.find(session[:current_user_id])
                       elsif cookies.permanent.encrypted[:remember_token].present?
                         User.find_by(remember_token: cookies.permanent.encrypted[:remember_token])
                       end

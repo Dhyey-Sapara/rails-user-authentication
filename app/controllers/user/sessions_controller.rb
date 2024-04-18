@@ -1,12 +1,12 @@
 class User::SessionsController < ApplicationController
   before_action :redirect_if_authenticated, only: [:create, :new]
-  
+
   def new
     redirect_to root_path if admin_signed_in?
   end
 
   def create
-    @user = User.find_by(email: params[:user][:email].downcase)
+    @user = User.find_by_email(params[:user][:email].downcase)
     if @user
       if @user.authenticate(params[:user][:password])
         login @user
